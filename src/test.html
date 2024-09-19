@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <title>Dropdown with Submenu</title>
+    <title>Dropdown with Categories and Subcategories</title>
 </head>
 <body>
 
 <div class="container mt-5">
     <div class="dropdown">
         <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Select Item
+            Select Category
         </button>
         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="dropdownItems">
             <!-- Items will be populated here -->
@@ -31,24 +31,28 @@
             method: 'GET',
             dataType: 'json',
             success: function(data) {
+                const groupedData = {};
+
+                // Group subcategories by category
+                data.forEach(item => {
+                    if (!groupedData[item.category]) {
+                        groupedData[item.category] = [];
+                    }
+                    groupedData[item.category].push(item.subCategory);
+                });
+
                 const dropdownItems = $('#dropdownItems');
 
-                data.forEach(item => {
-                    const hasSubmenu = item.subItems && item.subItems.length > 0; // Check if there are sub-items
-                    const listItem = `<div class="dropdown-item${hasSubmenu ? ' dropdown-toggle' : ''}"${hasSubmenu ? ' data-toggle="dropdown"' : ''}>
-                        ${item.name}
-                    </div>`;
+                // Populate dropdown
+                for (const category in groupedData) {
+                    const categoryItem = `<div class="dropdown-header">${category}</div>`;
+                    dropdownItems.append(categoryItem);
                     
-                    dropdownItems.append(listItem);
-                    
-                    if (hasSubmenu) {
-                        const submenu = $('<div class="dropdown-menu" aria-labelledby="dropdownMenuButton"></div>');
-                        item.subItems.forEach(subItem => {
-                            submenu.append(`<a class="dropdown-item" href="#">${subItem.name}</a>`);
-                        });
-                        dropdownItems.append(submenu);
-                    }
-                });
+                    groupedData[category].forEach(subCategory => {
+                        const subItem = `<a class="dropdown-item" href="#">${subCategory}</a>`;
+                        dropdownItems.append(subItem);
+                    });
+                }
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 console.error('Error fetching data:', textStatus, errorThrown);
