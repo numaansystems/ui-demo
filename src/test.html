@@ -4,7 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <title>Dropdown with Categories and Subcategories</title>
+    <title>Tree-Like Dropdown</title>
+    <style>
+        .dropdown-item {
+            cursor: pointer;
+        }
+        .nested-dropdown {
+            display: none;
+            padding-left: 15px;
+        }
+    </style>
 </head>
 <body>
 
@@ -46,18 +55,23 @@
 
                 // Populate dropdown
                 for (const category in groupedData) {
-                    const categoryItem = `<div class="dropdown-header">${category}</div>`;
+                    const categoryItem = `<div class="dropdown-item" data-toggle="collapse" data-target="#sub-${category.replace(/\s+/g, '-')}" aria-expanded="false">
+                        ${category}
+                    </div>`;
                     dropdownItems.append(categoryItem);
                     
-                    groupedData[category].forEach(subCategory => {
-                        const subItem = `<a class="dropdown-item" href="#" data-subcategory="${subCategory}">${subCategory}</a>`;
-                        dropdownItems.append(subItem);
-                    });
+                    const subItemList = `<div class="collapse nested-dropdown" id="sub-${category.replace(/\s+/g, '-')}">
+                        ${groupedData[category].map(subCategory => `
+                            <div class="dropdown-item" data-subcategory="${subCategory}">
+                                ${subCategory}
+                            </div>`).join('')}
+                    </div>`;
+                    dropdownItems.append(subItemList);
                 }
 
                 // Handle subcategory selection
-                $('.dropdown-item').on('click', function(event) {
-                    event.preventDefault(); // Prevent the default anchor click behavior
+                $('.dropdown-item[data-subcategory]').on('click', function(event) {
+                    event.preventDefault();
                     const selectedSubCategory = $(this).data('subcategory');
                     $('#dropdownMenuButton').text(selectedSubCategory); // Update button text
                     $('#selectedItem').text(`Selected: ${selectedSubCategory}`); // Show selected item
