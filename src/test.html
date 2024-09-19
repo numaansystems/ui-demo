@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <title>Dropdown with Submenu</title>
+</head>
+<body>
+
+<div class="container mt-5">
+    <div class="dropdown">
+        <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Select Item
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="dropdownItems">
+            <!-- Items will be populated here -->
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+    $(document).ready(function() {
+        const apiUrl = 'https://api.example.com/items'; // Replace with your API URL
+
+        $.ajax({
+            url: apiUrl,
+            method: 'GET',
+            dataType: 'json',
+            success: function(data) {
+                const dropdownItems = $('#dropdownItems');
+
+                data.forEach(item => {
+                    const hasSubmenu = item.subItems && item.subItems.length > 0; // Check if there are sub-items
+                    const listItem = `<div class="dropdown-item${hasSubmenu ? ' dropdown-toggle' : ''}"${hasSubmenu ? ' data-toggle="dropdown"' : ''}>
+                        ${item.name}
+                    </div>`;
+                    
+                    dropdownItems.append(listItem);
+                    
+                    if (hasSubmenu) {
+                        const submenu = $('<div class="dropdown-menu" aria-labelledby="dropdownMenuButton"></div>');
+                        item.subItems.forEach(subItem => {
+                            submenu.append(`<a class="dropdown-item" href="#">${subItem.name}</a>`);
+                        });
+                        dropdownItems.append(submenu);
+                    }
+                });
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.error('Error fetching data:', textStatus, errorThrown);
+            }
+        });
+    });
+</script>
+</body>
+</html>
