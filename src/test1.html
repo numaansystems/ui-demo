@@ -1,0 +1,37 @@
+<!-- table.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DataTable Example</title>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+</head>
+<body>
+    <h1>Data Table Example</h1>
+    <table id="example" class="display" style="width:100%">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Age</th>
+            </tr>
+        </thead>
+        <tbody>
+            <th:block th:each="item : ${items}">
+                <tr>
+                    <td th:text="${item.name}"></td>
+                    <td th:text="${item.age}"></td>
+                </tr>
+            </th:block>
+        </tbody>
+    </table>
+
+    <script>
+        $(document).ready(function() {
+            $('#example').DataTable(); // Initialize DataTable
+        });
+    </script>
+</body>
+</html>
