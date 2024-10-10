@@ -1,0 +1,57 @@
+[
+    {
+        "id":11,
+        "category": "Administration",
+        "subCategory" : "Office Supplies"
+    },
+    {
+        "id":12,
+        "category": "Administration",
+        "subCategory" : "Human Resources"
+    },
+    {
+        "id":13,
+        "category": "Administration",
+        "subCategory" : "Miscellaneous"
+    },
+    {
+        "id":14,
+        "category": "Wellness",
+        "subCategory" : "Fitness Clubs"
+    },
+    {
+        "id":15,
+        "category": "Wellness",
+        "subCategory" : "Spas"
+    },
+    {
+        "id":16,
+        "category": "Wellness",
+        "subCategory" : "Gyms"
+    },
+    {
+        "id":17,
+        "category": "Portfolio",
+        "subCategory" : "Minerals"
+    },
+    {
+        "id":18,
+        "category": "Portfolio",
+        "subCategory" : "Precious Metals"
+    },
+    {
+        "id":19,
+        "category": "Portfolio",
+        "subCategory" : "Stocks"
+    },
+    {
+        "id":20,
+        "category": "Portfolio",
+        "subCategory" : "Bonds"
+    },
+    {
+        "id":21,
+        "category": "Portfolio",
+        "subCategory" : "Mutual Funds"
+    }
+]

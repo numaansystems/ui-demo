@@ -1,6 +1,8 @@
 package com.example.demo.api;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,5 +23,10 @@ public class AgencyController {
     @GetMapping("/agencies")
     public ResponseEntity<List<Agency>> getAgencies(){
         return ResponseEntity.ok().body(service.getAgencies());
+    }
+
+    @GetMapping("/agencies-categories")
+    public ResponseEntity<Map<String, Set<Agency>>> getAgenciesWithCategories(){
+        return ResponseEntity.ok().body(service.getAgenciesAndCategories());
     }
 }
