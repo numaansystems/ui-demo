@@ -1,0 +1,97 @@
+<p-splitter [panelSizes]="[20, 75]" [minSizes]="[20,60]" [style]="{ height: 'calc(98vh)' }" styleClass="mb-5">
+    <ng-template pTemplate>
+        <div class="col flex align-items-center justify-content-center"
+            style="overflow: auto;min-width: 275px;max-width: 300px;">
+            <p-tree [value]="agencies" class="agency-tree-container" selectionMode="single"
+                (onNodeSelect)="nodeSelect($event)" (onNodeUnselect)="nodeUnselect($event)"></p-tree>
+        </div>
+    </ng-template>
+    <ng-template pTemplate>
+        <div class="col flex align-items-center justify-content-center"
+            style="overflow: auto;width: calc(100vw);height: calc(97vh);">
+            <p-table [value]="recs" [tableStyle]="{  'width': '100%' }">
+                <ng-template pTemplate="caption">
+                    <div style="display: flex; align-items: center;">
+                        <h3>Records</h3>
+                        <div style="width:100%;text-align: right;">
+                            <p-button label="Refresh" icon="pi pi-sync" size="small" (onClick)="refresh()"
+                                [disabled]="!canCreateNew" severity="success" />
+                            &nbsp;
+                            <p-button label="New Record" icon="pi pi-plus" size="small" (onClick)="createNew()"
+                                [disabled]="!canCreateNew" />
+                        </div>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr class="flex align-items-center justify-content-center">
+                        <td colspan="4" style="width: 100%;text-align: center;">
+                            <div style="width: 100%;line-height: 42px;">
+                                <span style="margin-right: 15px">No Records</span>
+                                <p-button label="New Record" icon="pi pi-plus" [link]="true" (onClick)="createNew()"
+                                    [disabled]="!canCreateNew" />
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th style="width: 10%;"></th>
+                        <th style="width: 40%;">Name</th>
+                        <th style="width: 25%;">Department</th>
+                        <th style="width: 25%;">City</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rec>
+                    <tr>
+                        <td>
+                            <fa-icon [icon]="editIcon" size="lg" title="Edit" class="edit-icon"></fa-icon>
+                            &nbsp;
+                            <fa-icon [icon]="delIcon" size="lg" title="Delete" class="delete-icon"
+                                (click)="delete(rec.id)"></fa-icon>
+                        </td>
+                        <td>{{ rec.name }}</td>
+                        <td>{{ rec.department }}</td>
+                        <td>{{ rec.city }}</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+        <p-dialog header="New" [modal]="true" [(visible)]="visible" [style]="{ width: '35rem' }">
+            <div style="height:20rem;">
+                <div style="padding-top:20px;margin-bottom: 10px;">
+                    <p-floatLabel>
+                        <input pInputText id="name" autocomplete="off" style="width: 100%;"
+                            [(ngModel)]="newRecord.name" />
+                        <label for="name" class="font-semibold w-6rem">Name</label>
+                    </p-floatLabel>
+                </div>
+                <div style="padding-top:20px;margin-bottom: 10px;">
+                    <p-floatLabel>
+                        <input pInputText id="department" autocomplete="off" style="width: 100%;"
+                            [(ngModel)]="newRecord.department" />
+                        <label for="department" class="font-semibold w-6rem">Department</label>
+                    </p-floatLabel>
+                </div>
+                <div style="padding-top:20px;margin-bottom: 10px;">
+                    <p-floatLabel>
+                        <input pInputText id="city" autocomplete="off" style="width: 100%;"
+                            [(ngModel)]="newRecord.city" />
+                        <label for="city" class="font-semibold w-6rem">City</label>
+                    </p-floatLabel>
+                </div>
+                <div style="padding-top:20px;margin-bottom: 10px;" *ngIf="saveError">
+                    <label style="color: red;">Unable to save. Please try again.</label>
+                </div>
+            </div>
+
+            <ng-template pTemplate="footer">
+                <div>
+                    <p-button size="small" label="Cancel" severity="secondary" (onClick)="visible = false" />
+                    <p-button size="small" label="Save" (onClick)="saveNew()" />
+                </div>
+            </ng-template>
+
+        </p-dialog>
+        <p-toast />
+    </ng-template>
+</p-splitter>

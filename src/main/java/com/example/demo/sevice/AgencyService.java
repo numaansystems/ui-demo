@@ -20,12 +20,13 @@ import com.fasterxml.jackson.databind.type.TypeFactory;
 @Service
 public class AgencyService {
     private ObjectMapper mapper = new ObjectMapper();
-    public List<Agency> getAgencies(){
+
+    public List<Agency> getAgencies() {
         try {
             String json = Files.readString(Paths.get("src/main/resources/agencies.json"));
-            CollectionType typeReference =
-                TypeFactory.defaultInstance().constructCollectionType(List.class, Agency.class);
-            List<Agency> agencies =  mapper.readValue(json, typeReference);
+            CollectionType typeReference = TypeFactory.defaultInstance().constructCollectionType(List.class,
+                    Agency.class);
+            List<Agency> agencies = mapper.readValue(json, typeReference);
 
             return agencies;
         } catch (IOException e) {
@@ -33,17 +34,18 @@ public class AgencyService {
         }
         return Collections.emptyList();
     }
-    public Map<String, Set<Agency>> getAgenciesAndCategories(){
+
+    public Map<String, Set<Agency>> getAgenciesAndCategories() {
         try {
             System.out.println(Paths.get(".").toAbsolutePath());
-            System.out.println(Paths.get("/Users/pavan_nonadm/Projects/ui-demo/src/main/resources/agencies.json").toAbsolutePath());
-            String json = Files.readString(Paths.get("/Users/pavan_nonadm/Projects/ui-demo/src/main/resources/agencies.json"));
+            System.out.println(Paths.get("src/main/resources/agencies.json").toAbsolutePath());
+            String json = Files.readString(Paths.get("src/main/resources/agencies.json"));
             System.out.println(json);
-            CollectionType typeReference =
-                TypeFactory.defaultInstance().constructCollectionType(List.class, Agency.class);
-            List<Agency> agencies =  mapper.readValue(json, typeReference);
+            CollectionType typeReference = TypeFactory.defaultInstance().constructCollectionType(List.class,
+                    Agency.class);
+            List<Agency> agencies = mapper.readValue(json, typeReference);
             Map<String, Set<Agency>> agenciesWithCategories = agencies.stream().collect(
-                Collectors.groupingBy(Agency::getCategory, Collectors.toSet()   ));            
+                    Collectors.groupingBy(Agency::getCategory, Collectors.toSet()));
             return agenciesWithCategories;
         } catch (IOException e) {
             e.printStackTrace();

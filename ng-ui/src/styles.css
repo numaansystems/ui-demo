@@ -1,0 +1,35 @@
+/* You can add global styles to this file, and also import other style files */
+@import "primeicons/primeicons.css";
+@import "primeng/resources/primeng.css";
+@import "primeng/resources/themes/lara-light-blue/theme.css";
+
+
+
+.agency-tree-container .p-tree {
+    border: none;
+}
+
+.agency-tree-container .p-treenode-label {
+    cursor: pointer;
+}
+
+.agency-tree-container .p-treenode-content {
+    outline: none;
+    box-shadow: none;
+}
+
+.delete-icon {
+    cursor: pointer;
+}
+
+.delete-icon:hover {
+    color: red;
+}
+
+.edit-icon {
+    cursor: pointer;
+}
+
+.edit-icon:hover {
+    color: rgb(4, 147, 250);
+}

@@ -1,0 +1,6 @@
+ng-ui/.vscode/extensions.json
+src/.DS_Store
+src/main/.DS_Store
+.vscode/settings.json
+target/
+src/main/resources/static/ui
