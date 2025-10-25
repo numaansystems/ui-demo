@@ -149,8 +149,8 @@ public class ModernAppController {
         // Forward to index.html for routes that don't end with a file extension
         // This allows the SPA router to handle all application routes
         String path = request.getRequestURI();
-        // Check if path ends with a file extension (e.g., .js, .css, .png)
-        if (!path.matches(".*\\.[a-zA-Z0-9]+$")) {
+        // Check if path ends with a file extension (e.g., .js, .css, .png, .min.js, .source-map)
+        if (!path.matches(".*\\.[a-zA-Z0-9-_]+$")) {
             return "forward:/modern-app/index.html";
         }
         return "forward:" + path;
@@ -287,11 +287,14 @@ public class LegacyGwtRoutesConfig {
                 )
                 .uri("http://legacy-gwt-server:8080"))
             
-            // Route for GWT Static Resources (JS, CSS, HTML, images)
+            // Route for GWT Static Resources (JS, CSS, HTML, images, fonts, icons)
             .route("legacy_gwt_static", r -> r
                 .path("/legacy-gwt/**/*.js", "/legacy-gwt/**/*.css", 
                       "/legacy-gwt/**/*.html", "/legacy-gwt/**/*.png", 
-                      "/legacy-gwt/**/*.jpg", "/legacy-gwt/**/*.gif")
+                      "/legacy-gwt/**/*.jpg", "/legacy-gwt/**/*.gif",
+                      "/legacy-gwt/**/*.svg", "/legacy-gwt/**/*.ico",
+                      "/legacy-gwt/**/*.woff", "/legacy-gwt/**/*.woff2", 
+                      "/legacy-gwt/**/*.ttf")
                 .filters(f -> f
                     .stripPrefix(1)
                     .setResponseHeader("Cache-Control", "public, max-age=3600")
