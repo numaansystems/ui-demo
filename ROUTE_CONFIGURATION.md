@@ -147,8 +147,10 @@ public class ModernAppController {
     @GetMapping(value = {"", "/**"})
     public String forward(HttpServletRequest request) {
         // Forward to index.html for routes that don't end with a file extension
+        // This allows the SPA router to handle all application routes
         String path = request.getRequestURI();
-        if (!path.contains(".")) {
+        // Check if path ends with a file extension (e.g., .js, .css, .png)
+        if (!path.matches(".*\\.[a-zA-Z0-9]+$")) {
             return "forward:/modern-app/index.html";
         }
         return "forward:" + path;
@@ -285,27 +287,11 @@ public class LegacyGwtRoutesConfig {
                 )
                 .uri("http://legacy-gwt-server:8080"))
             
-            // Route for GWT JavaScript Resources
-            .route("legacy_gwt_js", r -> r
-                .path("/legacy-gwt/**/*.js")
-                .filters(f -> f
-                    .stripPrefix(1)
-                    .setResponseHeader("Cache-Control", "public, max-age=3600")
-                )
-                .uri("http://legacy-gwt-server:8080"))
-            
-            // Route for GWT CSS Resources
-            .route("legacy_gwt_css", r -> r
-                .path("/legacy-gwt/**/*.css")
-                .filters(f -> f
-                    .stripPrefix(1)
-                    .setResponseHeader("Cache-Control", "public, max-age=3600")
-                )
-                .uri("http://legacy-gwt-server:8080"))
-            
-            // Route for GWT HTML Resources
-            .route("legacy_gwt_html", r -> r
-                .path("/legacy-gwt/**/*.html")
+            // Route for GWT Static Resources (JS, CSS, HTML, images)
+            .route("legacy_gwt_static", r -> r
+                .path("/legacy-gwt/**/*.js", "/legacy-gwt/**/*.css", 
+                      "/legacy-gwt/**/*.html", "/legacy-gwt/**/*.png", 
+                      "/legacy-gwt/**/*.jpg", "/legacy-gwt/**/*.gif")
                 .filters(f -> f
                     .stripPrefix(1)
                     .setResponseHeader("Cache-Control", "public, max-age=3600")
@@ -371,6 +357,15 @@ public class GwtSpecificConfig implements WebMvcConfigurer {
 ---
 
 ## Configuration Methods
+
+### Understanding Route Order
+
+**Important:** Spring Cloud Gateway processes routes in the order they are defined, not by path specificity. When multiple routes could match a request, the first matching route in the definition order is used.
+
+**Best Practice:**
+- Define more specific routes **before** more general routes
+- Example: `/reports/api/**` should be defined before `/reports/**`
+- This ensures that API routes don't get caught by broader UI routes
 
 ### Method 1: Controller-Based Routing
 **Best for:** Simple forwarding, serving static pages, or when you need custom logic
@@ -593,7 +588,8 @@ public class ReportingServiceRoutes {
     @Bean
     public RouteLocator reportingRoutes(RouteLocatorBuilder builder) {
         return builder.routes()
-            // Route for API requests (processed first due to more specific path)
+            // Route for API requests (defined first to match before the general UI route)
+            // Note: Routes are processed in definition order, not by path specificity
             .route("reporting_api", r -> r
                 .path("/reports/api/**")
                 .filters(f -> f
@@ -604,7 +600,7 @@ public class ReportingServiceRoutes {
                 )
                 .uri("http://reporting-service:8082"))
             
-            // Route for UI requests (less specific, processed after API routes)
+            // Route for UI requests (defined after API route to avoid matching API paths)
             .route("reporting_ui", r -> r
                 .path("/reports/**")
                 .filters(f -> f.stripPrefix(1))
