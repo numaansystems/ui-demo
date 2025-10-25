@@ -135,13 +135,23 @@ src/main/resources/static/modern-app/
 
 **Create a Controller to Handle SPA Routing:**
 ```java
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
 @Controller
 @RequestMapping("/modern-app")
 public class ModernAppController {
 
-    @GetMapping(value = "/{path:[^\\.]*}")
-    public String forward() {
-        return "forward:/modern-app/index.html";
+    @GetMapping(value = {"", "/**"})
+    public String forward(HttpServletRequest request) {
+        // Forward to index.html for routes that don't end with a file extension
+        String path = request.getRequestURI();
+        if (!path.contains(".")) {
+            return "forward:/modern-app/index.html";
+        }
+        return "forward:" + path;
     }
 }
 ```
@@ -275,9 +285,27 @@ public class LegacyGwtRoutesConfig {
                 )
                 .uri("http://legacy-gwt-server:8080"))
             
-            // Route for GWT Static Resources
-            .route("legacy_gwt_static", r -> r
-                .path("/legacy-gwt/*.{js,css,html,png,jpg,gif,nocache.js,cache.html}")
+            // Route for GWT JavaScript Resources
+            .route("legacy_gwt_js", r -> r
+                .path("/legacy-gwt/**/*.js")
+                .filters(f -> f
+                    .stripPrefix(1)
+                    .setResponseHeader("Cache-Control", "public, max-age=3600")
+                )
+                .uri("http://legacy-gwt-server:8080"))
+            
+            // Route for GWT CSS Resources
+            .route("legacy_gwt_css", r -> r
+                .path("/legacy-gwt/**/*.css")
+                .filters(f -> f
+                    .stripPrefix(1)
+                    .setResponseHeader("Cache-Control", "public, max-age=3600")
+                )
+                .uri("http://legacy-gwt-server:8080"))
+            
+            // Route for GWT HTML Resources
+            .route("legacy_gwt_html", r -> r
+                .path("/legacy-gwt/**/*.html")
                 .filters(f -> f
                     .stripPrefix(1)
                     .setResponseHeader("Cache-Control", "public, max-age=3600")
@@ -565,25 +593,28 @@ public class ReportingServiceRoutes {
     @Bean
     public RouteLocator reportingRoutes(RouteLocatorBuilder builder) {
         return builder.routes()
+            // Route for API requests (processed first due to more specific path)
             .route("reporting_api", r -> r
                 .path("/reports/api/**")
                 .filters(f -> f
                     .stripPrefix(1)
-                    .addRequestHeader("X-Gateway-Request-Id", "#{T(java.util.UUID).randomUUID().toString()}")
+                    // Add custom header - for dynamic values, use a custom filter
+                    .addRequestHeader("X-Gateway-Request", "true")
                     // Add JWT token validation filter if needed
                 )
                 .uri("http://reporting-service:8082"))
             
+            // Route for UI requests (less specific, processed after API routes)
             .route("reporting_ui", r -> r
                 .path("/reports/**")
-                .and()
-                .not(p -> p.path("/reports/api/**"))
                 .filters(f -> f.stripPrefix(1))
                 .uri("http://reporting-service:8082"))
             .build();
     }
 }
 ```
+
+**Note:** For dynamic header values (like UUIDs or timestamps), you'll need to implement a custom GatewayFilterFactory. Static headers can be added directly as shown above.
 
 ### Example 4: Multiple Legacy Applications
 
